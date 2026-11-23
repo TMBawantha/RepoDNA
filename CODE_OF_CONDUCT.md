@@ -1,15 +1,34 @@
 # Code of Conduct
 
-## Community standards
+## Our Commitment
 
-Treat others with respect. Welcome people with different backgrounds and levels of experience. Give constructive feedback about the work, and respect people's privacy and boundaries.
+We are committed to making RepoDNA a welcoming, respectful, and inclusive open-source community for everyone.
 
-Harassment, discriminatory remarks, personal attacks, threats, unwanted sexual attention, and sharing someone's private information without permission are unacceptable.
+## Expected Behavior
 
-These standards apply to RepoDNA's project spaces, including issues, pull requests, and other project discussions, and when someone represents the project in public.
+- Be respectful and considerate of others.
+- Welcome contributors of all experience levels.
+- Provide constructive feedback.
+- Respect different perspectives and opinions.
+- Focus on improving the project together.
 
-## Reporting and enforcement
+## Unacceptable Behavior
 
-Report concerns privately to RepoDNA's maintainer, Bawantha Dulara, using a private contact method listed on the maintainer's GitHub profile. Include what happened and any relevant links or screenshots you are comfortable sharing. [Maintainer profile](https://github.com/TMBawantha)
+- Harassment, discrimination, or personal attacks.
+- Insulting or intentionally offensive comments.
+- Sharing private information without permission.
+- Disruptive or inappropriate behavior.
 
-The maintainer will review reports and share information only as needed to respond. Depending on the circumstances, the maintainer may remove content, issue a warning, or restrict participation.
+## Reporting Issues
+
+A private reporting channel for RepoDNA is pending. For conduct that violates GitHub's policies, use [GitHub's abuse reporting process](https://docs.github.com/en/communities/maintaining-your-safety-on-github/reporting-abuse-or-spam). Keep sensitive details out of public issues and discussions.
+
+Reports received by project maintainers will be reviewed fairly and confidentially where possible.
+
+## Enforcement
+
+Project maintainers may remove inappropriate content, reject contributions, or restrict participation when necessary.
+
+## Scope
+
+This Code of Conduct applies to RepoDNA's official project spaces, including issues, discussions, pull requests, and other community interactions.

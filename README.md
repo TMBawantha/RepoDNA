@@ -1,13 +1,36 @@
 # RepoDNA
 
-RepoDNA is a project for exploring, understanding, and visualizing codebases.
+**Explore, understand, and visualize your codebase.**
 
-Created by Bawantha Dulara ([@TMBawantha](https://github.com/TMBawantha)).
+RepoDNA is an open-source developer tool designed to help developers explore repository structures, understand code dependencies, and visualize relationships between files and modules.
+
+## Project Status
+
+RepoDNA is currently in early development.
+
+## Goals
+
+- Visualize repository architecture.
+- Explore file and module dependencies.
+- Understand how different parts of a codebase are connected.
+- Identify potential impacts of code changes.
+
+## Tech Stack
+
+- TypeScript
+- Node.js
+- pnpm
+- Vite
+- Tailwind CSS
 
 ## Contributing
 
-See the [contribution guide](CONTRIBUTING.md) and [code of conduct](CODE_OF_CONDUCT.md).
+Contributions, suggestions, and bug reports are welcome. Please read the [contribution guide](CONTRIBUTING.md) and [code of conduct](CODE_OF_CONDUCT.md) before contributing.
+
+## Original Creator
+
+RepoDNA was originally created by **Bawantha Dulara**.
 
 ## License
 
-RepoDNA is licensed under the [Apache License 2.0](LICENSE). See [NOTICE](NOTICE) for attribution.
+Licensed under the [Apache License, Version 2.0](LICENSE). See [NOTICE](NOTICE) for attribution.
