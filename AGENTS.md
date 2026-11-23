@@ -17,6 +17,11 @@ Use `<type>/<short-kebab-case-name>` for branches and `<type>: <short imperative
 | `chore` | Tooling and maintenance | `chore/code-quality`            | `chore: configure ESLint`             |
 | `docs`  | Documentation           | `docs/git-workflow`             | `docs: document RepoDNA Git workflow` |
 
+## Organize application code and tests
+
+- Keep application code in `src/` and test files in the root-level `tests/` directory.
+- Mirror the feature-based paths from `src/` in `tests/`. For example, `src/modules/analysis/count-typescript-files.ts` is tested by `tests/modules/analysis/count-typescript-files.test.ts`.
+
 ## Check code quality
 
 - Use pnpm for dependencies and scripts. Include `pnpm-lock.yaml` when changing dependencies.
