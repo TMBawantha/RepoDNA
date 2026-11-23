@@ -6,9 +6,35 @@
     <title>RepoDNA</title>
   </head>
   <body>
-    <main class="mx-auto max-w-3xl px-6 py-16">
-      <h1 class="text-3xl font-semibold">RepoDNA</h1>
-      <p class="mt-3 text-slate-700">Explore, understand, and visualize your codebase.</p>
+    <main class="mx-auto max-w-2xl px-6 py-16">
+      <p class="font-semibold text-slate-900">RepoDNA</p>
+      <h1 class="mt-8 text-3xl font-semibold text-slate-900">Explore your repository</h1>
+      <form id="repository-form" class="mt-3" novalidate>
+        <p id="repository-hint" class="text-slate-700">
+          Enter a public GitHub repository URL to get started.
+        </p>
+        <label for="repository-url" class="sr-only">GitHub repository URL</label>
+        <input
+          id="repository-url"
+          name="repository-url"
+          type="url"
+          required
+          autocapitalize="none"
+          spellcheck="false"
+          aria-describedby="repository-hint repository-error"
+          placeholder="https://github.com/owner/repo"
+          class="mt-4 w-full rounded-lg border border-slate-500 px-4 py-3 text-slate-900 placeholder:text-slate-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-700 aria-invalid:border-red-700"
+        />
+        <p id="repository-error" role="alert" class="text-sm text-red-700 not-empty:mt-2"></p>
+        <button
+          type="submit"
+          class="mt-4 rounded-lg bg-indigo-700 px-4 py-3 font-semibold text-white hover:bg-indigo-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-700"
+        >
+          Analyze Repository
+        </button>
+        <p id="repository-result" role="status" class="text-sm text-slate-700 not-empty:mt-4"></p>
+      </form>
+      <p class="mt-6 text-sm text-slate-600">Repository analysis will be implemented separately.</p>
     </main>
     <script type="module" src="/src/main.ts"></script>
   </body>
