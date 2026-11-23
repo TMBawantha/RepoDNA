@@ -27,6 +27,8 @@ RepoDNA is currently in early development.
 
 Contributions, suggestions, and bug reports are welcome. Please read the [contribution guide](CONTRIBUTING.md) and [code of conduct](CODE_OF_CONDUCT.md) before contributing.
 
+See the [architecture decision records](docs/adr/) for the rationale behind RepoDNA's structure and tooling.
+
 ## Original Creator
 
 RepoDNA was originally created by **Bawantha Dulara**.
