@@ -34,6 +34,8 @@ Use `<type>/<short-kebab-case-name>` for branches and `<type>: <short imperative
 ## Submit a change
 
 - Run the formatting, lint, and build checks before submitting. Verify the behavior that changed.
+- When a pull request introduces a significant architecture decision, add an ADR under `docs/adr/` in the same PR. Use the [template](docs/adr/template.md) and the next sequential number.
+- Preserve the original decision and rationale in accepted ADRs. When replacing a decision, write a new ADR and update the old record's status to `Superseded` with a link to the replacement.
 - Review the diff and stage the intended files before committing.
 - Push the topic branch with `git push -u origin <branch>` on its first push. Target `main` in the pull request.
 
