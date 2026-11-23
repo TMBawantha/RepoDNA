@@ -1,4 +1,10 @@
-export function parseRepositoryUrl(value: string) {
+export interface RepositoryInfo {
+  owner: string;
+  name: string;
+  url: string;
+}
+
+export function parseRepositoryUrl(value: string): RepositoryInfo | null {
   const match =
     /^https?:\/\/github\.com\/([a-z\d](?:[a-z\d-]{0,37}[a-z\d])?)\/([a-z\d._-]+)\/?$/i.exec(
       value.trim(),
@@ -13,5 +19,5 @@ export function parseRepositoryUrl(value: string) {
     return null;
   }
 
-  return { owner, name };
+  return { owner, name, url: `https://github.com/${owner}/${name}` };
 }
