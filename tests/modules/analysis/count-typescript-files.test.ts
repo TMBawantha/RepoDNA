@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { countTypeScriptFiles } from './count-typescript-files';
+import { countTypeScriptFiles } from '../../../src/modules/analysis/count-typescript-files';
 
 describe('countTypeScriptFiles', () => {
   it('counts TypeScript files correctly', () => {
