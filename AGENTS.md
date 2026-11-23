@@ -1,16 +1,36 @@
-# RepoDNA Git workflow
+# RepoDNA workflow and code standards
 
 ## Start a change
 
 - Check the working tree and preserve any existing changes.
 - Switch to `main` with `git switch main` and update it with `git pull --ff-only origin main`.
-- Create a feature branch from the updated `main`, such as `git switch -c feat/repository-input`.
+- Create a topic branch from the updated `main`, such as `git switch -c feat/repository-input`.
+
+## Name branches and commits
+
+Use `<type>/<short-kebab-case-name>` for branches and `<type>: <short imperative summary>` for commit subjects.
+
+| Type    | Use                     | Branch example                  | Commit example                        |
+| ------- | ----------------------- | ------------------------------- | ------------------------------------- |
+| `feat`  | New functionality       | `feat/repository-input`         | `feat: add repository URL input`      |
+| `fix`   | Bug fixes               | `fix/repository-url-validation` | `fix: reject invalid repository URLs` |
+| `chore` | Tooling and maintenance | `chore/code-quality`            | `chore: configure ESLint`             |
+| `docs`  | Documentation           | `docs/git-workflow`             | `docs: document RepoDNA Git workflow` |
+
+## Check code quality
+
+- Use pnpm for dependencies and scripts. Include `pnpm-lock.yaml` when changing dependencies.
+- Apply the repository's Prettier configuration with `pnpm format` and verify formatting with `pnpm format:check`.
+- Run `pnpm lint` with the recommended ESLint and typescript-eslint rules configured in `eslint.config.mjs`.
+- Run `pnpm typecheck` for standalone TypeScript checks. Keep strict mode and the unused-code and switch-fallthrough checks enabled in `tsconfig.json`.
+- Validate external input at runtime before using it as typed application data.
+- Run `pnpm build` to type-check and build for production. The build already runs `pnpm typecheck`.
 
 ## Submit a change
 
-- Run `pnpm build` and verify the behavior that changed.
-- Review the diff, stage the intended files, and use a descriptive commit message such as `feat: add repository URL input`.
-- Push the feature branch with `git push -u origin <feature-branch>` on its first push. Target `main` in the pull request.
+- Run the formatting, lint, and build checks before submitting. Verify the behavior that changed.
+- Review the diff and stage the intended files before committing.
+- Push the topic branch with `git push -u origin <branch>` on its first push. Target `main` in the pull request.
 
 ## Clean up after a merge
 
