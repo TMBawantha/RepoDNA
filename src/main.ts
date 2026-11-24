@@ -1,6 +1,7 @@
+import { summarizeFileClassification } from './modules/analysis/file-classification';
 import { parseRepositoryUrl } from './modules/repository';
 import { fetchRepositoryMetadata, type RepositoryMetadata } from './modules/repository/metadata';
-import { fetchRepositoryFileTree } from './modules/repository/file-tree';
+import { fetchRepositoryFileTree, type RepositoryFileTree } from './modules/repository/file-tree';
 import { renderFileTree } from './modules/repository/render-file-tree';
 import './style.css';
 
@@ -16,6 +17,18 @@ const treeSection = document.querySelector<HTMLElement>('#repository-file-tree')
 const treeCounts = document.querySelector('#repository-tree-counts')!;
 const treeWarning = document.querySelector<HTMLElement>('#repository-tree-warning')!;
 const treeContent = document.querySelector('#repository-tree-content')!;
+const classificationSection = document.querySelector<HTMLElement>('#repository-classification')!;
+const classificationWarning = document.querySelector<HTMLElement>(
+  '#repository-classification-warning',
+)!;
+const classificationEmpty = document.querySelector<HTMLElement>(
+  '#repository-classification-empty',
+)!;
+const classificationCounts = document.querySelector<HTMLElement>(
+  '#repository-classification-counts',
+)!;
+const languageCounts = document.querySelector('#repository-language-counts')!;
+const categoryCounts = document.querySelector('#repository-category-counts')!;
 const numberFormat = new Intl.NumberFormat();
 let request: AbortController | undefined;
 
@@ -27,6 +40,7 @@ function clearFeedback() {
   status.textContent = '';
   details.hidden = true;
   treeSection.hidden = true;
+  classificationSection.hidden = true;
   treeWarning.hidden = true;
   treeContent.replaceChildren();
 }
@@ -50,6 +64,31 @@ function showMetadata(metadata: RepositoryMetadata) {
   }
 
   details.hidden = false;
+}
+
+function renderCounts(target: Element, entries: { label: string; count: number }[]) {
+  const rows = document.createDocumentFragment();
+  for (const { label, count } of entries) {
+    const row = document.createElement('div');
+    row.className = 'flex justify-between gap-4 py-2 text-slate-700';
+    const term = document.createElement('dt');
+    const value = document.createElement('dd');
+    term.textContent = label;
+    value.textContent = numberFormat.format(count);
+    row.append(term, value);
+    rows.append(row);
+  }
+  target.replaceChildren(rows);
+}
+
+function showClassification(tree: RepositoryFileTree) {
+  const { languages, categories, partial } = summarizeFileClassification(tree);
+  classificationWarning.hidden = !partial;
+  classificationEmpty.hidden = languages.length > 0;
+  classificationCounts.hidden = languages.length === 0;
+  renderCounts(languageCounts, languages);
+  renderCounts(categoryCounts, categories);
+  classificationSection.hidden = false;
 }
 
 input.addEventListener('input', clearFeedback);
@@ -94,7 +133,8 @@ form.addEventListener('submit', async (event) => {
         : 'This tree is empty.';
     }
     treeSection.hidden = false;
-    status.textContent = 'Repository details and file tree loaded.';
+    showClassification(tree);
+    status.textContent = 'Repository details, file tree, and classification loaded.';
   } catch (cause) {
     if (!controller.signal.aborted) {
       status.textContent = '';

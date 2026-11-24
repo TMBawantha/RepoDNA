@@ -83,6 +83,32 @@
         <p id="repository-tree-counts" class="mt-2 text-sm text-slate-700"></p>
         <div id="repository-tree-content" class="mt-4 overflow-x-auto text-sm break-all"></div>
       </section>
+      <section
+        id="repository-classification"
+        aria-labelledby="repository-classification-title"
+        class="mt-6 rounded-xl border border-slate-200 p-6"
+        hidden
+      >
+        <h2 id="repository-classification-title" class="text-xl font-semibold text-slate-900">
+          File classification
+        </h2>
+        <p id="repository-classification-warning" class="mt-2 text-sm text-amber-800" hidden>
+          Partial analysis. Counts reflect only the files GitHub returned.
+        </p>
+        <p id="repository-classification-empty" class="mt-2 text-sm text-slate-700" hidden>
+          No files to classify.
+        </p>
+        <div id="repository-classification-counts" class="mt-4 grid gap-4 sm:grid-cols-2 sm:gap-6">
+          <div>
+            <h3 class="font-medium text-slate-900">Languages and formats by file count</h3>
+            <dl id="repository-language-counts" class="mt-2 divide-y divide-slate-200 text-sm"></dl>
+          </div>
+          <div>
+            <h3 class="font-medium text-slate-900">Files by category</h3>
+            <dl id="repository-category-counts" class="mt-2 divide-y divide-slate-200 text-sm"></dl>
+          </div>
+        </div>
+      </section>
     </main>
     <script type="module" src="/src/main.ts"></script>
   </body>
