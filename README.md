@@ -6,7 +6,7 @@ RepoDNA is an open-source developer tool designed to help developers explore rep
 
 ## Project Status
 
-RepoDNA is currently in early development.
+RepoDNA is currently in early development. See the [product direction](docs/product-direction.md) for the MVP priorities and future capabilities.
 
 ## Goals
 
