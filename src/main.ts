@@ -40,6 +40,7 @@ const sourceButton = document.querySelector<HTMLButtonElement>('#fetch-repositor
 const sourceStatus = document.querySelector('#repository-source-status')!;
 const sourceError = document.querySelector('#repository-source-error')!;
 const sourceFiles = document.querySelector('#repository-source-files')!;
+const importSummary = document.querySelector('#repository-import-summary')!;
 document.querySelector('#repository-source-limit')!.textContent =
   `Fetch up to ${MAX_SOURCE_REQUESTS} JavaScript or TypeScript files of at most ${MAX_SOURCE_BYTES / 1024} KiB each.`;
 const numberFormat = new Intl.NumberFormat();
@@ -61,6 +62,7 @@ function clearFeedback() {
   sourceStatus.textContent = '';
   sourceError.textContent = '';
   sourceFiles.replaceChildren();
+  importSummary.textContent = '';
   treeWarning.hidden = true;
   treeContent.replaceChildren();
 }
@@ -119,6 +121,7 @@ sourceButton.addEventListener('click', async () => {
   sourceButton.disabled = true;
   sourceError.textContent = '';
   sourceFiles.replaceChildren();
+  importSummary.textContent = '';
 
   try {
     const result = await fetchRepositorySource(repository, tree.blobs, {
@@ -147,6 +150,26 @@ sourceButton.addEventListener('click', async () => {
       preview.textContent = file.content;
       disclosure.append(label, preview);
       sourceFiles.append(disclosure);
+    }
+
+    if (result.files.length) {
+      importSummary.textContent = 'Analyzing static imports…';
+      try {
+        const { analyzeImports } = await import('./modules/analysis');
+        if (controller.signal.aborted) return;
+
+        const counts = { internal: 0, external: 0, unresolved: 0 };
+        for (const relationship of analyzeImports(
+          result.files,
+          tree.blobs.map(({ path }) => path),
+        )) {
+          counts[relationship.kind]++;
+        }
+        importSummary.textContent = `Static imports and re-exports in fetched files · Internal ${numberFormat.format(counts.internal)} · External ${numberFormat.format(counts.external)} · Unresolved ${numberFormat.format(counts.unresolved)}`;
+      } catch {
+        if (!controller.signal.aborted)
+          importSummary.textContent = 'Could not analyze static imports.';
+      }
     }
   } catch {
     if (!controller.signal.aborted) {

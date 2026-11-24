@@ -6,6 +6,11 @@
 - Switch to `main` with `git switch main` and update it with `git pull --ff-only origin main`.
 - Create a topic branch from the updated `main`, such as `git switch -c feat/repository-input`.
 
+## Finish a phase before starting the next
+
+- Verify, commit, and push the current phase. Open a pull request targeting `main` and confirm it has merged.
+- Fast-forward local `main` and complete the verified post-merge branch cleanup below before creating the next phase branch.
+
 ## Name branches and commits
 
 Use `<type>/<short-kebab-case-name>` for branches and `<type>: <short imperative summary>` for commit subjects.
