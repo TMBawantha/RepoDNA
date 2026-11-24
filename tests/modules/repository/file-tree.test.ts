@@ -15,7 +15,13 @@ describe('fetchRepositoryFileTree', () => {
       Response.json({
         truncated: false,
         tree: [
-          { type: 'blob', path: 'src/modules/main.ts' },
+          {
+            type: 'blob',
+            path: 'src/modules/main.ts',
+            mode: '100644',
+            sha: 'a'.repeat(40),
+            size: 42,
+          },
           { type: 'tree', path: 'src' },
           { type: 'tree', path: 'src/modules' },
           { type: 'blob', path: 'README.md' },
@@ -28,6 +34,7 @@ describe('fetchRepositoryFileTree', () => {
     const { signal } = new AbortController();
 
     await expect(fetchRepositoryFileTree(repository, 'release/stable', signal)).resolves.toEqual({
+      blobs: [{ path: 'src/modules/main.ts', sha: 'a'.repeat(40), size: 42 }],
       nodes: [
         {
           name: 'src',
@@ -79,6 +86,7 @@ describe('fetchRepositoryFileTree', () => {
 
     await expect(fetchRepositoryFileTree(repository, 'main')).resolves.toEqual({
       nodes: [],
+      blobs: [],
       fileCount: 0,
       directoryCount: 0,
       truncated: false,

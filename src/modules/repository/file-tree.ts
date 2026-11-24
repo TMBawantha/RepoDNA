@@ -3,6 +3,9 @@ import type { RepositoryInfo } from './index';
 interface TreeEntry {
   path: string;
   type: 'tree' | 'blob' | 'commit';
+  sha?: unknown;
+  size?: unknown;
+  mode?: unknown;
 }
 
 interface TreeDirectory {
@@ -13,7 +16,14 @@ interface TreeDirectory {
 
 export type RepositoryTreeNode = TreeDirectory | { name: string; kind: 'file' | 'submodule' };
 
+export interface RepositoryBlob {
+  path: string;
+  sha: string;
+  size: number;
+}
+
 export interface RepositoryFileTree {
+  blobs: RepositoryBlob[];
   nodes: RepositoryTreeNode[];
   fileCount: number;
   directoryCount: number;
@@ -37,6 +47,7 @@ function buildTree(entries: TreeEntry[], truncated: boolean): RepositoryFileTree
   const nodes: RepositoryTreeNode[] = [];
   const directories = new Map<string, RepositoryTreeNode[]>([['', nodes]]);
   let fileCount = 0;
+  const blobs: RepositoryBlob[] = [];
 
   function getDirectory(path: string): RepositoryTreeNode[] {
     const existing = directories.get(path);
@@ -50,7 +61,7 @@ function buildTree(entries: TreeEntry[], truncated: boolean): RepositoryFileTree
     return children;
   }
 
-  for (const { path, type } of entries) {
+  for (const { path, type, sha, size, mode } of entries) {
     if (type === 'tree') {
       getDirectory(path);
     } else {
@@ -60,11 +71,23 @@ function buildTree(entries: TreeEntry[], truncated: boolean): RepositoryFileTree
         name: path.slice(separator + 1),
         kind: type === 'blob' ? 'file' : 'submodule',
       });
-      if (type === 'blob') fileCount++;
+      if (type === 'blob') {
+        fileCount++;
+        if (
+          (mode === '100644' || mode === '100755') &&
+          typeof sha === 'string' &&
+          /^[a-f0-9]{40}$/i.test(sha) &&
+          typeof size === 'number' &&
+          Number.isSafeInteger(size) &&
+          size >= 0
+        ) {
+          blobs.push({ path, sha, size });
+        }
+      }
     }
   }
 
-  return { nodes, fileCount, directoryCount: directories.size - 1, truncated };
+  return { nodes, blobs, fileCount, directoryCount: directories.size - 1, truncated };
 }
 
 export async function fetchRepositoryFileTree(

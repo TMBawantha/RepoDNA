@@ -3,6 +3,12 @@ import { parseRepositoryUrl } from './modules/repository';
 import { fetchRepositoryMetadata, type RepositoryMetadata } from './modules/repository/metadata';
 import { fetchRepositoryFileTree, type RepositoryFileTree } from './modules/repository/file-tree';
 import { renderFileTree } from './modules/repository/render-file-tree';
+import {
+  fetchRepositorySource,
+  MAX_SOURCE_BYTES,
+  MAX_SOURCE_REQUESTS,
+} from './modules/repository/source-code';
+import type { RepositoryInfo } from './modules/repository';
 import './style.css';
 
 const form = document.querySelector<HTMLFormElement>('#repository-form')!;
@@ -29,8 +35,16 @@ const classificationCounts = document.querySelector<HTMLElement>(
 )!;
 const languageCounts = document.querySelector('#repository-language-counts')!;
 const categoryCounts = document.querySelector('#repository-category-counts')!;
+const sourceSection = document.querySelector<HTMLElement>('#repository-source')!;
+const sourceButton = document.querySelector<HTMLButtonElement>('#fetch-repository-source')!;
+const sourceStatus = document.querySelector('#repository-source-status')!;
+const sourceError = document.querySelector('#repository-source-error')!;
+const sourceFiles = document.querySelector('#repository-source-files')!;
+document.querySelector('#repository-source-limit')!.textContent =
+  `Fetch up to ${MAX_SOURCE_REQUESTS} JavaScript or TypeScript files of at most ${MAX_SOURCE_BYTES / 1024} KiB each.`;
 const numberFormat = new Intl.NumberFormat();
 let request: AbortController | undefined;
+let sourceSnapshot: { repository: RepositoryInfo; tree: RepositoryFileTree } | undefined;
 
 function clearFeedback() {
   request?.abort();
@@ -41,6 +55,12 @@ function clearFeedback() {
   details.hidden = true;
   treeSection.hidden = true;
   classificationSection.hidden = true;
+  sourceSnapshot = undefined;
+  sourceSection.hidden = true;
+  sourceButton.disabled = false;
+  sourceStatus.textContent = '';
+  sourceError.textContent = '';
+  sourceFiles.replaceChildren();
   treeWarning.hidden = true;
   treeContent.replaceChildren();
 }
@@ -91,6 +111,56 @@ function showClassification(tree: RepositoryFileTree) {
   classificationSection.hidden = false;
 }
 
+sourceButton.addEventListener('click', async () => {
+  if (!sourceSnapshot || sourceButton.disabled) return;
+  const { repository, tree } = sourceSnapshot;
+  const controller = new AbortController();
+  request = controller;
+  sourceButton.disabled = true;
+  sourceError.textContent = '';
+  sourceFiles.replaceChildren();
+
+  try {
+    const result = await fetchRepositorySource(repository, tree.blobs, {
+      signal: controller.signal,
+      onProgress: ({ completed, total }) => {
+        sourceStatus.textContent = `Fetching source files… ${completed} of ${total}`;
+      },
+    });
+    if (controller.signal.aborted) return;
+
+    const summary = [`Fetched ${result.files.length} of ${result.eligible} eligible files.`];
+    if (result.skippedBinary) summary.push(`Skipped ${result.skippedBinary} non-text files.`);
+    if (result.unrequested)
+      summary.push(`${result.unrequested} eligible files were not requested.`);
+    if (tree.truncated) summary.push('The GitHub file tree is partial.');
+    sourceStatus.textContent = summary.join(' ');
+    sourceError.textContent = result.errors.join('\n');
+
+    for (const file of result.files) {
+      const disclosure = document.createElement('details');
+      const label = document.createElement('summary');
+      const preview = document.createElement('pre');
+      label.className = 'cursor-pointer break-all font-medium';
+      label.textContent = file.path;
+      preview.className = 'mt-2 max-h-80 overflow-auto rounded bg-slate-100 p-3';
+      preview.textContent = file.content;
+      disclosure.append(label, preview);
+      sourceFiles.append(disclosure);
+    }
+  } catch {
+    if (!controller.signal.aborted) {
+      sourceStatus.textContent = '';
+      sourceError.textContent = 'Could not fetch source files.';
+    }
+  } finally {
+    if (request === controller) {
+      request = undefined;
+      sourceButton.disabled = false;
+    }
+  }
+});
+
 input.addEventListener('input', clearFeedback);
 
 form.addEventListener('submit', async (event) => {
@@ -134,6 +204,8 @@ form.addEventListener('submit', async (event) => {
     }
     treeSection.hidden = false;
     showClassification(tree);
+    sourceSnapshot = { repository, tree };
+    sourceSection.hidden = false;
     status.textContent = 'Repository details, file tree, and classification loaded.';
   } catch (cause) {
     if (!controller.signal.aborted) {
