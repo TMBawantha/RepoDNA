@@ -1,5 +1,7 @@
 import { parseRepositoryUrl } from './modules/repository';
 import { fetchRepositoryMetadata, type RepositoryMetadata } from './modules/repository/metadata';
+import { fetchRepositoryFileTree } from './modules/repository/file-tree';
+import { renderFileTree } from './modules/repository/render-file-tree';
 import './style.css';
 
 const form = document.querySelector<HTMLFormElement>('#repository-form')!;
@@ -10,6 +12,10 @@ const details = document.querySelector<HTMLElement>('#repository-details')!;
 const title = document.querySelector('#repository-title')!;
 const description = document.querySelector<HTMLElement>('#repository-description')!;
 const fields = document.querySelectorAll<HTMLElement>('[data-metadata]');
+const treeSection = document.querySelector<HTMLElement>('#repository-file-tree')!;
+const treeCounts = document.querySelector('#repository-tree-counts')!;
+const treeWarning = document.querySelector<HTMLElement>('#repository-tree-warning')!;
+const treeContent = document.querySelector('#repository-tree-content')!;
 const numberFormat = new Intl.NumberFormat();
 let request: AbortController | undefined;
 
@@ -20,6 +26,9 @@ function clearFeedback() {
   error.textContent = '';
   status.textContent = '';
   details.hidden = true;
+  treeSection.hidden = true;
+  treeWarning.hidden = true;
+  treeContent.replaceChildren();
 }
 
 function showMetadata(metadata: RepositoryMetadata) {
@@ -64,17 +73,37 @@ form.addEventListener('submit', async (event) => {
 
   try {
     const metadata = await fetchRepositoryMetadata(repository, controller.signal);
-    if (!controller.signal.aborted) {
-      showMetadata(metadata);
-      status.textContent = 'Repository details loaded.';
+    if (controller.signal.aborted) return;
+    showMetadata(metadata);
+    status.textContent = 'Loading repository file tree…';
+
+    const tree = await fetchRepositoryFileTree(
+      repository,
+      metadata.defaultBranch,
+      controller.signal,
+    );
+    if (controller.signal.aborted) return;
+
+    treeCounts.textContent = `Files ${numberFormat.format(tree.fileCount)} · Directories ${numberFormat.format(tree.directoryCount)}`;
+    treeWarning.hidden = !tree.truncated;
+    if (tree.nodes.length) {
+      treeContent.replaceChildren(renderFileTree(tree.nodes));
+    } else {
+      treeContent.textContent = tree.truncated
+        ? 'No entries were returned.'
+        : 'This tree is empty.';
     }
+    treeSection.hidden = false;
+    status.textContent = 'Repository details and file tree loaded.';
   } catch (cause) {
     if (!controller.signal.aborted) {
       status.textContent = '';
       error.textContent =
         cause instanceof Error && !(cause instanceof TypeError || cause instanceof SyntaxError)
           ? cause.message
-          : 'Could not load repository details. Try again.';
+          : details.hidden
+            ? 'Could not load repository details. Try again.'
+            : 'Could not load the repository file tree. Try again.';
     }
   } finally {
     if (request === controller) request = undefined;
