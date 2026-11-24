@@ -109,6 +109,31 @@
           </div>
         </div>
       </section>
+      <section
+        id="repository-source"
+        aria-labelledby="repository-source-title"
+        class="mt-6 rounded-xl border border-slate-200 p-6"
+        hidden
+      >
+        <h2 id="repository-source-title" class="text-xl font-semibold text-slate-900">
+          Source files
+        </h2>
+        <p id="repository-source-limit" class="mt-2 text-sm text-slate-700"></p>
+        <button
+          id="fetch-repository-source"
+          type="button"
+          class="mt-3 rounded-lg border border-slate-400 px-4 py-2 font-medium text-slate-900 hover:bg-slate-100 disabled:opacity-50"
+        >
+          Fetch source files
+        </button>
+        <p id="repository-source-status" role="status" class="mt-2 text-sm text-slate-700"></p>
+        <p
+          id="repository-source-error"
+          role="alert"
+          class="text-sm whitespace-pre-line text-red-700"
+        ></p>
+        <div id="repository-source-files" class="mt-3 space-y-2 text-sm"></div>
+      </section>
     </main>
     <script type="module" src="/src/main.ts"></script>
   </body>
