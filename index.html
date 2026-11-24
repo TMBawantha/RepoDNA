@@ -69,6 +69,20 @@
           </div>
         </dl>
       </section>
+      <section
+        id="repository-file-tree"
+        aria-labelledby="repository-tree-title"
+        class="mt-6 rounded-xl border border-slate-200 p-6"
+        hidden
+      >
+        <h2 id="repository-tree-title" class="text-xl font-semibold text-slate-900">File tree</h2>
+        <p id="repository-tree-warning" class="mt-2 text-sm text-amber-800" hidden>
+          GitHub returned a partial tree. The totals only cover the files and directories shown
+          here.
+        </p>
+        <p id="repository-tree-counts" class="mt-2 text-sm text-slate-700"></p>
+        <div id="repository-tree-content" class="mt-4 overflow-x-auto text-sm break-all"></div>
+      </section>
     </main>
     <script type="module" src="/src/main.ts"></script>
   </body>
